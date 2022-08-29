@@ -1,0 +1,13 @@
+# Basic application data
+app_base_url: 'http://automationpractice.com/index.php'
+app_user_login: 'adasda@aa.pl'
+app_user_pass: 'passwd123'
+
+# Basic web driver config
+headless: false
+fullscreen: true
+disable_notifications: true
+max_wait: 20
+min_wait: 10
+test_run_timeout: 100
+rerun: 1
