@@ -6,4 +6,4 @@ class TestSearch(BaseTest):
 
     def test_search(self, driver, login_with_user_credentials):
         main_page = MainPage(driver)
-        main_page.search()
+        main_page.search("TEST")
