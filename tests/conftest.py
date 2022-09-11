@@ -1,9 +1,12 @@
+from datetime import datetime
+import time
+
 import pytest
 
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
 
-from config.config import HEADLESS, DISABLE_NOTIFICATIONS
+from config.config import HEADLESS, DISABLE_NOTIFICATIONS, FULLSCREEN
 
 
 @pytest.fixture()
@@ -22,7 +25,7 @@ def _prepare_chrome_driver():
     return wd
 
 
-def _prepare_chrome_options(FULLSCREEN=None):
+def _prepare_chrome_options():
     browser_options = webdriver.ChromeOptions()
     if HEADLESS:
         browser_options.add_argument("--headless")
@@ -41,11 +44,32 @@ def _prepare_chrome_options(FULLSCREEN=None):
     return browser_options, d
 
 
-# @pytest.fixture
-# def screenshot_on_fail(driver, request):
-#     yield
-#     if request.node.report_setup.failed:
-#         print('Test setup failed for test: ' + request.node._nodeid)
-#     elif request.node.report_setup.passed:
-#         if request.node.report_call.failed:
-#             take_screenshot(driver, request)
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    # execute all other hooks to obtain the report object
+    outcome = yield
+    rep = outcome.get_result()
+
+    # set a report attribute for each phase of a call, which can
+    # be "setup", "call", "teardown"
+
+    setattr(item, "rep_" + rep.when, rep)
+
+
+# Create screenshot on test fail
+@pytest.fixture(scope="function", autouse=True)
+def screenshot_on_fail(driver, request):
+    yield
+    if request.node.rep_setup.failed:
+        print('Test setup failed for test: ' + request.node._nodeid)
+    elif request.node.rep_setup.passed:
+        if request.node.rep_call.failed:
+            take_screenshot(driver, request)
+            print("Executing test failed. Taking screenshot.", request.node.nodeid)
+
+
+# Save screenshot
+def take_screenshot(driver, nodeid):
+    time.sleep(1)
+    file_name = f'{nodeid}_{datetime.today().strftime("%Y-%m-%d_%H:%M")}.png'.replace("/", "_").replace("::", "__")
+    driver.save_screenshot(file_name)
