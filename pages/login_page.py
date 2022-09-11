@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from config import config
 from pages.base_page import BasePage
+from pages.my_account_page import MyAccountPage
 
 
 class LoginPage(BasePage):

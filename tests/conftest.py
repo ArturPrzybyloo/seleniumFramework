@@ -6,7 +6,7 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
 
-from config.config import HEADLESS, DISABLE_NOTIFICATIONS
+from config.config import HEADLESS, DISABLE_NOTIFICATIONS, FULLSCREEN
 
 
 @pytest.fixture()
@@ -25,7 +25,7 @@ def _prepare_chrome_driver():
     return wd
 
 
-def _prepare_chrome_options(FULLSCREEN=None):
+def _prepare_chrome_options():
     browser_options = webdriver.ChromeOptions()
     if HEADLESS:
         browser_options.add_argument("--headless")
