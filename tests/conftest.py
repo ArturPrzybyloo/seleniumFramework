@@ -1,12 +1,15 @@
 from datetime import datetime
 import time
-
+from config import config
 import pytest
 
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
 
 from config.config import HEADLESS, DISABLE_NOTIFICATIONS, FULLSCREEN
+from pages.login_page import LoginPage
+from pages.main_page import MainPage
+from pages.my_account_page import MyAccountPage
 
 
 @pytest.fixture()
@@ -17,6 +20,19 @@ def driver(request):
     setattr(cls.obj, "driver", wd)
     request.addfinalizer(wd.quit)
     return wd
+
+@pytest.fixture()
+def login_with_user_credentials(driver):
+    main_page = MainPage(driver)
+    login_page = LoginPage(driver)
+    my_account_page = MyAccountPage(driver)
+
+    base_url = config.APP_BASE_URL
+    driver.get(base_url)
+    main_page.click_login_button()
+    login_page.enter_login_credentials()
+    main_page.verify_signing_in()
+    my_account_page.click_home_button()
 
 
 def _prepare_chrome_driver():
