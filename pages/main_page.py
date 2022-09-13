@@ -11,6 +11,7 @@ class MainPage(BasePage):
     _sign_in_button = (By.XPATH, "//a[@class='login']")
     _sign_out_button = (By.XPATH, "//a[@class='logout']")
     _found_products = (By.XPATH, "//div[@class='product-container']//a[@class='product-name']")
+    _my_account_button = (By.XPATH, "//a[@title='View my customer account']")
 
     def search(self, search_expression):
         search_bar = SearchBarRegion(self.driver)
@@ -26,5 +27,8 @@ class MainPage(BasePage):
         elements = self.driver.find_elements(*self._found_products)
         for element in elements:
             assert_that(element.text).contains(searched_expression)
+
+    def go_to_my_account(self):
+        self.ca.wait_for_visibility(self._my_account_button, click=True)
 
 
